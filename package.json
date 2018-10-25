@@ -1,0 +1,8 @@
+{
+    "name": "graphene.shader",
+    "displayName": "Shader Lib",
+    "version": "0.1.2",
+    "unity": "2018.2",
+    "description": ". . .",
+    "dependencies": { }
+}
