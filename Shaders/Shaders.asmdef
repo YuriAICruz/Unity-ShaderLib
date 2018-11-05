@@ -1,0 +1,8 @@
+{
+    "name": "Graphene.Shaders",
+    "references": [],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
