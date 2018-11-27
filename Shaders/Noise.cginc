@@ -79,3 +79,13 @@ float3 hsv2rgb (in float3 hsv) {
 float rand (in float2 seed) {
 	return frac (sin (dot (seed, float2 (12.9898, 78.233))) * 137.5453);
 }
+
+float fbm(float2 p) 
+{
+	float v = 0.0;
+	v += genNoise2(p*1.)*.5;
+	v += genNoise2(p*2.)*.25;
+	v += genNoise2(p*4.)*.125;
+	return v;
+}
+
