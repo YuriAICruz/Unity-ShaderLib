@@ -27,7 +27,7 @@
             
             void surf(Input IN, inout SurfaceOutput o){
                 o.Albedo = _Color.rgb;
-                float2 noise = genNoise(IN.uv_MainTex * _NoiseScale);
+                float2 noise = genNoise2(IN.uv_MainTex * _NoiseScale);
                 o.Normal.rg += noise;
                 
                 o.Emission = texCUBE(_Reflection, IN.worldRefl).rgb;
