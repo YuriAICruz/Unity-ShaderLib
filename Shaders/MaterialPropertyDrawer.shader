@@ -1,5 +1,5 @@
 ﻿// Shader from github
-// credits: smkplus/UnityShaderFFS.md
+// credits: it smkplus/UnityShaderFFS.md
 
 Shader "MaterialPropertyDrawer"
 {
