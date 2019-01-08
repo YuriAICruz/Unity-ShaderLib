@@ -32,6 +32,7 @@
 
             #include "UnityCG.cginc"
             #include "Noise.cginc"
+            #include "Math.cginc"
 
             struct appdata
             {
@@ -66,14 +67,6 @@
                 return o;
             }
             
-            float2x2 rotz(float angle)
-            {
-                float2x2 m;
-                m[0][0] = cos(angle); m[0][1] = -sin(angle);
-                m[1][0] = sin(angle); m[1][1] = cos(angle);
-                return m;
-            }
-
             fixed4 frag (v2f i) : SV_Target
             {   
                 float2 uv = i.uv - float2(_Offset.x, _Offset.y);
@@ -90,7 +83,7 @@
                 float f = fbm(uv * _Turbulence + offset); // rotation from fbm
                 float l = max(_Instability, length(uv)); // rotation amount normalized over distance
                 
-                uv += mul( rotz( ( (f) / l ) * smoothstep(-0.2, 0.4, i.uv.y)), uv);
+                uv += mul( rotZ( ( (f) / l ) * smoothstep(-0.2, 0.4, i.uv.y)), uv);
                 
                 // flame thickness
                 float flame = 1.3 - length(uv.x) * _Thickness;
