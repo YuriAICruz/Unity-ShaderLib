@@ -1,4 +1,4 @@
-﻿Shader "Unlit/StreamReductionBufferInitializer"
+﻿Shader "Graphene/Buffered/StreamReductionBufferInitializer"
 {
     Properties
     {

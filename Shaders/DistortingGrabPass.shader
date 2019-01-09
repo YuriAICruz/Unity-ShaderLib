@@ -1,8 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Custom/DistortingGrabPass" {
+﻿Shader "Graphene/FireFx/DistortingGrabPass" {
     Properties {
         _Texture ("Texture", 2D) = "white" {}
 		_TintColor  ("Color", Color) = (1,1,1,1)

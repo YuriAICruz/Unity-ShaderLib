@@ -1,4 +1,4 @@
-﻿Shader "RenderTexture/StreamReductionBuffer"
+﻿Shader "Graphene/Buffered/StreamReductionBuffer"
 {
     Properties
     {

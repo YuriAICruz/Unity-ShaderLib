@@ -1,4 +1,4 @@
-﻿Shader "Custom/BurnFadeUnlit"
+﻿Shader "Graphene/FireFx/BurnFadeUnlit"
 {
 	Properties
 	{

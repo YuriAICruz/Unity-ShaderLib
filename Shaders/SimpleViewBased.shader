@@ -1,4 +1,4 @@
-﻿Shader "GrapheneAi/SimpleViewBase" {
+﻿Shader "Graphene/SimpleViewBase" {
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_RimColor ("Rim Color", Color) = (1,1,1,1)

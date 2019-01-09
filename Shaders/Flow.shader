@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Unlit/Flow"
+﻿Shader "Graphene/FluidFx/Flow"
 {
     Properties {
         _FlowMap ("Flow Map", 2D) = "grey" {}

@@ -1,4 +1,4 @@
-﻿Shader "Unlit/ProportionUnlit"
+﻿Shader "Graphene/ProportionUnlit"
 {
     Properties
     {

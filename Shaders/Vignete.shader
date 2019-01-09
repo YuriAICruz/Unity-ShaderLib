@@ -4,7 +4,7 @@
 
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
-Shader "Unlit/Vignete"
+Shader "Graphene/Buffered/Vignete"
 {
 	Properties
 	{

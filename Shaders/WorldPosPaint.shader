@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
-Shader "Unlit/WorldPosPaint"
+Shader "Graphene/Buffered/WorldPosPaint"
 {
 	Properties
 	{

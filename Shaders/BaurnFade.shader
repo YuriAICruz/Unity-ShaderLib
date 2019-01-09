@@ -1,4 +1,4 @@
-﻿Shader "Custom/BurnFade" {
+﻿Shader "Graphene/FireFx/BurnFade" {
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		[HDR]

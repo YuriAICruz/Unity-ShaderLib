@@ -1,4 +1,4 @@
-﻿Shader "Unlit/Flame"
+﻿Shader "Graphene/FireFx/Flame"
 {
     Properties
     {

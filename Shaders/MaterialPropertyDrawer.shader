@@ -1,7 +1,7 @@
 ﻿// Shader from github
 // credits: it smkplus/UnityShaderFFS.md
 
-Shader "MaterialPropertyDrawer"
+Shader "Graphene/MaterialPropertyDrawer"
 {
     Properties
     {
