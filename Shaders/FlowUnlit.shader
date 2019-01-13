@@ -5,22 +5,29 @@ Shader "Graphene/FluidFx/FlowUnlit"
     Properties {
         _FlowMap ("Flow Map", 2D) = "grey" {}
         _MainTex ("Texture", 2D) = "grey" {}
+        _Normal ("Normal", 2D) = "grey" {}
+        _Cube ("Reflection", CUBE) = "" {}
         
+        _Smoothness ("Smoothness", Range(0,1)) = 0
+        
+        [Header(Waves)]
         _Speed ("Speed", float) = 0.2
+        _Frequency ("Frequency", float) = 2.4
+        _Intensity ("Intensity", float) = 6
+        _Angle ("Angle", float) = 8
+        _Steps ("Turbulence", Range(0,10)) = 7
+        
+        [Header(Flow)]
+        _Size ("Size", float) = 1
         _FlowSpeed ("Flow Speed", float) = 0.2
         _FlowIntensity ("Flow Intensity", float) = 0.2
         
-        _Waterdepth ("Waterdepth", float) = 2.1
-        _Angle ("Angle", float) = 8
-        _Steps ("Steps", float) = 7
-        
+        [Header(Reflection)]
         _ReflectionColor ("Reflection Color", Color) = (0,0,0,0)
         _ReflectionIntensity ("ReflectionIntensity", float) = 7
         _ReflectionCutOff ("ReflectionCutOff", float) = 0.012
         _ReflectionIntence ("ReflectionIntence", float) = 2
         
-        _Smoothness ("Smoothness", Range(0,1)) = 0
-        _Cube ("Reflection", CUBE) = "" {}
     }
  
     SubShader {
@@ -58,6 +65,7 @@ Shader "Graphene/FluidFx/FlowUnlit"
  
             sampler2D _FlowMap;
             sampler2D _MainTex;
+            sampler2D _Normal;
             
             fixed4 _MainTex_ST;
             fixed4 _ReflectionColor;
@@ -66,13 +74,15 @@ Shader "Graphene/FluidFx/FlowUnlit"
             fixed _FlowSpeed;
             fixed _FlowIntensity;
             float _NoiseSize;
-            float _Waterdepth;
+            float _Size;
             float _Steps;
             float _Angle;
             float _ReflectionIntensity;
             float _ReflectionCutOff;
             float _ReflectionIntence;
             float _Smoothness;
+            float _Intensity;
+            float _Frequency;
             
             samplerCUBE _Cube;
                          
@@ -117,7 +127,7 @@ Shader "Graphene/FluidFx/FlowUnlit"
                 float theta = 0.0;
                 
                 float speed_x = 0.3;
-                float speed_y = 0.3;
+                float speed_y = speed_x;
                 
                 for (int i = 0; i < steps; i++)
                 {
@@ -133,7 +143,7 @@ Shader "Graphene/FluidFx/FlowUnlit"
             
             fixed4 frag(v2f v) : COLOR {                
                 //Flow Calc
-                half3 flowVal = (tex2D(_FlowMap, v.uv) * 2 - 1) * _FlowIntensity;
+                half3 flowVal = (tex2D(_FlowMap, v.uv*_Size)-0.5) * _FlowIntensity;
  
                 float dif1 = frac(_Time.y * _FlowSpeed + 0.5);
                 float dif2 = frac(_Time.y * _FlowSpeed);
@@ -145,8 +155,8 @@ Shader "Graphene/FluidFx/FlowUnlit"
                 
                 // refraction
                 float emboss = 0.50;
-                float intensity = 2.4;
-                float frequency = 6.0;
+                float intensity = _Intensity;
+                float frequency = _Frequency;
                 
                 // reflection
                 float delta = 60.;
@@ -167,7 +177,7 @@ Shader "Graphene/FluidFx/FlowUnlit"
                 float dy = emboss*(cc1-col(c2,time, _Speed, _Angle, _Steps, frequency, intensity))/delta;
                 
                 c1.x += dx*2.0;
-                c1.y = -(c1.y + dy*2.0);
+                c1.y += dy*2.0;
                 
                 float alpha = 1.0 + dot(dx,dy)*intence;
                 
@@ -182,8 +192,12 @@ Shader "Graphene/FluidFx/FlowUnlit"
                 float4 col1 = tex2D(_MainTex, c1 - flowVal.xy * dif1) + (cAlpha);                
                 float4 col2 = tex2D(_MainTex, c1 - flowVal.xy * dif2) + (cAlpha);  
                 float4 c = lerp(col1, col2, lerpVal);
+                
+                half3 n1 = UnpackNormal(tex2D(_Normal, c1 - flowVal.xy * dif1));
+                half3 n2 = UnpackNormal(tex2D(_Normal, c1 - flowVal.xy * dif2));
+                half3 tnormal = lerp(n1, n2, lerpVal);
  
-                half3 tnormal = (float4(dx*10, dy*10, 1, 1));
+                //half3 tnormal = (float4(dx*10, dy*10, 1, 1));
                 half3 worldNormal;
                 worldNormal.x = dot(v.tspace0, tnormal);
                 worldNormal.y = dot(v.tspace1, tnormal);
