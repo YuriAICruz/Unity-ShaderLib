@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
-Shader "Graphene/FluidFx/FlowUnlit"
+Shader "Graphene/FluidFx/FlowMobile"
 {
     Properties {
         _MainTex ("Texture", 2D) = "grey" {}
@@ -34,11 +34,13 @@ Shader "Graphene/FluidFx/FlowUnlit"
  
     SubShader {
         Pass {
-            Tags { "RenderType"="Opaque" }
+            Tags { "RenderType"="Opaque" "LightMode" = "ForwardBase"}
             
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            
+            #pragma multi_compile_fwdbase
             
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
@@ -68,6 +70,11 @@ Shader "Graphene/FluidFx/FlowUnlit"
                 half3 tspace0 : TEXCOORD3; // tangent.x, bitangent.x, normal.x
                 half3 tspace1 : TEXCOORD4; // tangent.y, bitangent.y, normal.y
                 half3 tspace2 : TEXCOORD5; // tangent.z, bitangent.z, normal.z
+                
+                fixed4 diff : COLOR0; // diffuse lighting color
+                fixed3 ambient : COLOR1;
+                
+                SHADOW_COORDS(1)
             };
  
             sampler2D _FlowMap;
@@ -116,7 +123,13 @@ Shader "Graphene/FluidFx/FlowUnlit"
                 o.tspace0 = half3(wTangent.x, wBitangent.x, o.worldNormal.x);
                 o.tspace1 = half3(wTangent.y, wBitangent.y, o.worldNormal.y);
                 o.tspace2 = half3(wTangent.z, wBitangent.z, o.worldNormal.z);
-                                
+                
+                TRANSFER_SHADOW(o)
+                
+                half nl = max(0, dot(o.worldNormal, _WorldSpaceLightPos0.xyz));
+                o.diff = nl * _LightColor0;
+                o.ambient = ShadeSH9(half4(o.worldNormal,1));
+                
                 return o;
             }
             
@@ -210,6 +223,13 @@ Shader "Graphene/FluidFx/FlowUnlit"
                 // Cubemap
                 half3 skyColor = texCUBE (_Cube, worldRefl).rgb;
                 
+                fixed shadow = (1- (1-SHADOW_ATTENUATION(v)) * _ShadowIntensity);
+                float attenuation = LIGHT_ATTENUATION(v);
+                //float shadow = (1 - attenuation) * _ShadowIntensity;
+                
+                fixed3 lighting = v.diff * shadow + v.ambient;
+                
+                _Color.rgb *= lighting;
                 return lerp(c, float4(skyColor, 1), _Smoothness) * _Color;
             }
  

@@ -15,7 +15,7 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" "RenderType"="Transparent"}
+        Tags { "RenderType"="Transparent"}
         LOD 100
 
         ZWrite Off
