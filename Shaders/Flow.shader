@@ -154,7 +154,7 @@ Shader "Graphene/FluidFx/Flow"
             half3 n2 = UnpackNormal(tex2D(_Normal, c1 - flowVal.xy * dif2));
             half3 tnormal = lerp(n1, n2, lerpVal);
             
-            o.Albedo = c;
+            o.Albedo = c * _Color;
             o.Normal = tnormal;
             o.Smoothness = _Smoothness;
 			o.Metallic = _Metallic;
