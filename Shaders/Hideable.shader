@@ -8,6 +8,9 @@
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_MinAlpha ("Min Alpha", Range(0,1)) = 0.0
 		_NoiseSize ("Noise Size", float) = 1.0
+		
+		
+		_Timelapse ("Timelapse", float) = 1.0
 	}
 	SubShader {
 		Tags { "Queue"="AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout" }
@@ -16,10 +19,9 @@
         //Blend SrcAlpha OneMinusSrcAlpha
         
 		CGPROGRAM
-		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows alphatest:_Cutoff 
+		//fullforwardshadows alphatest:Cutoff
+		#pragma surface surf Standard alphatest:_Cutoff addshadow
 
-		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
 		
         #include "Noise.cginc"
@@ -37,6 +39,7 @@
         half _NoiseSize;
         half _MinAlpha;
         half _TimeReset;
+        half _Timelapse;
 		half _Glossiness;
 		half _Metallic;
 		fixed4 _Color;
@@ -64,6 +67,10 @@
 			fixed4 m = tex2D (_MetallicTex, IN.uv_MainTex) * _Metallic;
 												
 			half a = fragmentFade(IN.worldPos, abs(min(_Time.y - _TimeReset, 1)));
+			//half a = fragmentFade(IN.worldPos, abs(min(_Timelapse, 1)));
+			
+			if(a<=0)
+			    discard;
 			
 			o.Albedo = c.rgb;
 			o.Metallic = m;
