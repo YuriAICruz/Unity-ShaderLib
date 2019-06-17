@@ -1,4 +1,6 @@
-﻿Shader "Graphene/TransitionTexture" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Graphene/TransitionTexture" {
 	Properties {
 	
         [Header(A Properties)]
@@ -28,7 +30,18 @@
 		_WaveHeight ("Wave Height", float) = 0.05
 		
 		_Transition ("Transition", Range(0,1)) = 1.0		
+		
+        [Header(Outline)]
+        [KeywordEnum(OFF, ON)] OUTLINE ("Outline", float) = 0
+        [HDR]
+		_OutlineColor ("Outline Color", Color) = (0,0,0,1)
+		_Outline ("Outline width", Range (0, 1)) = .1
+		_OutlineTransition ("Outline Transition", Range(0,1)) = 1.0
 	}
+	
+    CGINCLUDE
+        #pragma multi_compile OUTLINE_ON OUTLINE_OFF
+	ENDCG
 	
 	SubShader {
         Tags { "RenderType"="Opaque" }
@@ -36,10 +49,11 @@
 		        
         //Blend SrcAlpha OneMinusSrcAlpha
         
-		CGPROGRAM
+		CGPROGRAM            
         //#pragma surface surf Standard fullforwardshadows
-        #pragma surface surf StandardDefaultGI vertex:vert
+        #pragma surface surf StandardDefaultGI fullforwardshadows vertex:vert
 		#pragma target 3.0
+		
         
         #include "Noise.cginc"
         #include "UnityPBSLighting.cginc"
@@ -68,7 +82,7 @@
             LightingStandard_GI(s, data, gi);
             
             float grey = (gi.indirect.diffuse.r + gi.indirect.diffuse.g +gi.indirect.diffuse.b) * 0.33333;
-            float transition = _Transition*_Transition;
+            float transition = _Transition*_Transition * 2;
             
             gi.indirect.diffuse = (1-transition) * grey + transition * gi.indirect.diffuse;
         }
@@ -116,19 +130,23 @@
 		
         void vert (inout appdata_full v, out Input o) {
             UNITY_INITIALIZE_OUTPUT(Input,o);
+            
+            //o.localPos = mul (unity_ObjectToWorld, v.vertex);
+            //o.localPos = UnityObjectToClipPos(v.vertex);
             o.localPos = v.vertex.xyz;
+            //o.localPos = UnityObjectToClipPos(v.vertex);
         }
  
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			float transition = _Transition;
-			
-			float mask = 1-smoothstep(
-			    pow(transition, 1), 
-			    transition, 
-			    (1- IN.localPos.y+sin((IN.worldPos.x+IN.worldPos.z)*_WaveSize)*(1-transition)*_WaveHeight )*0.9-0.55
-            );
-			    
-			transition = lerp(0, 1, lerp(0, mask, min(transition*5,1)));
+						
+//			float mask = 1-smoothstep(
+//			    pow(transition, 1), 
+//			    transition, 
+//			    (1- IN.localPos.y+sin((IN.worldPos.x+IN.worldPos.z)*_WaveSize)*(1-transition)*_WaveHeight )*0.9-0.55
+//            );
+//			    
+//			transition = lerp(0, 1, lerp(0, mask, min(transition*5,1)));
 			
 			fixed3 color = 
 			    (transition * tex2D (_MainTex, IN.uv_MainTex) * _Color) + 
@@ -161,7 +179,58 @@
 			o.Smoothness = g;
 			o.Emission = e;
 		}
+		
+
 		ENDCG
+		      
+		
+		Pass {
+            Name "outline_pass"
+			//Tags { "LightMode" = "Always" }
+			Cull Front
+			
+			ZWrite On
+			
+			ColorMask RGB
+			
+			Blend SrcAlpha OneMinusSrcAlpha
+ 
+			CGPROGRAM            
+			#pragma vertex vert
+			#pragma fragment frag
+				
+            float _OutlineTransition;
+            uniform float _Outline;
+            uniform float4 _OutlineColor;
+			
+			struct appdata {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+            };
+             
+            struct v2f {
+                float4 pos : POSITION;
+                float4 color : COLOR;
+            };
+			
+			v2f vert(appdata v) {
+                v2f o;
+                
+                #if OUTLINE_ON
+                    v.vertex *= ( ceil(1*_OutlineTransition) + sin(_Time.y*6)*_Outline*0.2*_OutlineTransition + _Outline*_OutlineTransition );
+                    o.pos = UnityObjectToClipPos(v.vertex);
+                    o.color = _OutlineColor * _OutlineTransition;
+                #else
+                    o.pos = UnityObjectToClipPos(v.vertex);
+                #endif
+                
+                return o;
+            }
+
+			half4 frag(v2f i) :COLOR { return i.color; }
+			ENDCG
+		}
 	}
+	//CustomEditor "TransitionTexture"
 	FallBack "Diffuse"
 }

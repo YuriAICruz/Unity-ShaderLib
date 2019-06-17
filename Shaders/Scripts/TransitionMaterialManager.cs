@@ -4,7 +4,7 @@ using System.Linq;
 using System.Xml;
 using UnityEngine;
 
-namespace Packages.Shader.Scripts
+namespace Graphene.Shader.Scripts
 {
     public class TransitionMaterialManager : MonoBehaviour
     {
