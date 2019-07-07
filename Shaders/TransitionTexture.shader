@@ -3,6 +3,8 @@
 Shader "Graphene/TransitionTexture" {
 	Properties {
 	
+        [Enum(UnityEngine.Rendering.CullMode)] _ObjectCullMode("Object Cull Mode", Float) = 2
+        
         [Header(A Properties)]
 		_Color ("Color", Color) = (1,1,1,1)		
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
@@ -33,6 +35,9 @@ Shader "Graphene/TransitionTexture" {
 		
         [Header(Outline)]
         [KeywordEnum(OFF, ON)] OUTLINE ("Outline", float) = 0
+        
+        [Enum(UnityEngine.Rendering.CullMode)] _CullMode("Outline Cull Mode", Float) = 1
+        
         [HDR]
 		_OutlineColor ("Outline Color", Color) = (0,0,0,1)
 		_Outline ("Outline width", Range (0, 1)) = .1
@@ -46,6 +51,7 @@ Shader "Graphene/TransitionTexture" {
 	SubShader {
         Tags { "RenderType"="Opaque" }
 		LOD 200
+        Cull [_ObjectCullMode]
 		        
         //Blend SrcAlpha OneMinusSrcAlpha
         
@@ -168,30 +174,26 @@ Shader "Graphene/TransitionTexture" {
 			    ((1-transition) * _GlossinessB)
             ;
             
-			float e = 
-			    (transition * _Emission) + 
-			    ((1-transition) * _EmissionB)
-            ;
+			float e = lerp(_EmissionB, _Emission, transition);
 			
 			o.Albedo = color.rgb;
 			o.Metallic = m;
 			o.Normal = n;
 			o.Smoothness = g;
-			o.Emission = e;
+			o.Emission = _Emission;
 		}
 		
 
 		ENDCG
-		      
 		
 		Pass {
             Name "outline_pass"
 			//Tags { "LightMode" = "Always" }
-			Cull Front
+			Cull [_CullMode]
 			
 			ZWrite On
 			
-			ColorMask RGB
+			//ColorMask RGB
 			
 			Blend SrcAlpha OneMinusSrcAlpha
  
