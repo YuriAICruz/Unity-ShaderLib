@@ -25,11 +25,15 @@
         _RimColor ("Rim Color", Color) = (0.8, 0.8, 0.8, 0.6)
         _RimThreshold ("Rim Threshold", Range(0, 1)) = 0.5
         _RimSmooth ("Rim Smooth", Range(0, 1)) = 0.1
+        
+        [Enum(UnityEngine.Rendering.CullMode)] _CullMode("Cull Mode Enum", Float) = 2
     }
     
     SubShader
     {
         Tags { "RenderType" = "Opaque" }
+                
+        Cull [_CullMode]
         
         CGPROGRAM
         
