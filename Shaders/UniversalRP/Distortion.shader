@@ -2,6 +2,7 @@
 {
     Properties
     {
+        [HideInInspector]
         _MainTex ("Texture", 2D) = "white" {}
         _Width ("Width", Float) = 0.01
         _Offset ("Offset", Float) = 0.1
