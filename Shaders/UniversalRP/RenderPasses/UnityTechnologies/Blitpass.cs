@@ -1,7 +1,4 @@
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.LWRP;
-
-namespace UnityEngine.Experiemntal.Rendering.Universal
+namespace UnityEngine.Rendering.LWRP
 {
     /// <summary>
     /// Copy the given color buffer to the given destination color buffer.

@@ -1,7 +1,4 @@
-﻿using UnityEngine.Rendering;
-using UnityEngine.Rendering.LWRP;
-
-namespace UnityEngine.Experimental.Rendering.Universal
+﻿namespace UnityEngine.Rendering.LWRP
 {
     public class FullScreenQuadPass : ScriptableRenderPass
     {
