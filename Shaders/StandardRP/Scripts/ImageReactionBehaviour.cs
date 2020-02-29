@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace DefaultNamespace
+namespace Graphene.Shader.Scripts
 {
     public class ClickPoint : MonoBehaviour, IPointerDownHandler
     {
