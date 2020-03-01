@@ -105,3 +105,35 @@ float fbm(float2 p)
 	return v;
 }
 
+            
+float voronoi(float2 pos){
+    float2 uv = pos;
+    float2 iuv = floor(uv); //gets integer values no floating point
+    float2 fuv = frac(uv); // gets only the fractional part
+    float minDist = 1.0;  // minimun distance
+    
+    for (int y = -1; y <= 1; y++)
+    {
+        for (int x = -1; x <= 1; x++)
+        {
+            // Position of neighbour on the grid
+            float2 neighbour = float2(float(x), float(y));
+            // Random position from current + neighbour place in the grid
+            float2 pointv = hash(iuv + neighbour);
+            // Move the point with time
+            //pointv = 0.5 + 0.5*sin(_Time.y + 6.2236*pointv);
+            pointv = 0.5 + 0.5*sin(1 + 6.2236*pointv);//each point moves in a certain way
+                                                            // Vector between the pixel and the point
+            float2 diff = neighbour + pointv - fuv;
+            // Distance to the point
+            float dist = length(diff);
+            // Keep the closer distance
+            minDist = min(minDist, dist);
+        }
+    }
+    
+    // Draw the min distance (distance field)
+    return minDist * minDist; // squared it to to make edges look sharper
+    
+}
+
