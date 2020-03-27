@@ -16,6 +16,8 @@
         
         _Noise1 ("Noise 1", Float) = 0
         _Noise2 ("Noise 2", Float) = 0
+        
+        _Light ("Light Attenuation", Float) = 0
     }
     
     SubShader
@@ -47,6 +49,7 @@
 			float _Rim;
 			float _Noise1;
 			float _Noise2;
+			float _Light;
 			
             #define MAX_VISIBLE_LIGHTS 4
             
@@ -81,15 +84,17 @@
             float4 frag (v2f i) : SV_TARGET{
             
                 float noise1 = voronoi(i.uv * _Noise1);
-                noise1 = pow(noise1, 1.5);
+                noise1 = pow(noise1, 1);
+                noise1 = smoothstep(0.2,0.8, noise1);
                 
 	            float light =  (saturate(dot(i.worldNormal, Main_Directional_Light.xyz)) * i.fresnel);                
+	            light = saturate(pow(light, _Light));
                 
                 float noise2 = genNoise2(i.uv * _Noise2).x;
                 noise2 = smoothstep(-1,0.6,noise2);
                 noise2 = sin(noise2 * 3.14)*0.5 + 0.5;
                 
-                float stars = genNoise2(i.uv * 6).x;
+                float stars = genNoise2(i.uv * 12).x;
                 stars = smoothstep(0,0.16,pow(stars, 4));
                 
                 float4 col = tex2D(_MainTex, i.uv);
@@ -99,9 +104,9 @@
                 //return _VeinColor * noise1 * pow(light,0.5);
                 return stars * _DotsColor + 
                     lerp(
-                        noise2*_Color + (1-noise2) * _BaseColor,
+                        noise2 * _Color + (1-noise2) * _BaseColor,
                         _VeinColor,
-                        noise1 * pow(light,0.8)
+                        noise1 * smoothstep(0.0,0.2,light)//noise1 * pow(light,0.8)
                     ) +
                     light * _ScatteringColor
                 ;
