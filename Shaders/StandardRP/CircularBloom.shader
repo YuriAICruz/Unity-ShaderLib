@@ -9,6 +9,7 @@
         _Size ("Size", Float) = 1
         _Inner ("Inner", Float) = 1
         _Feather ("Feather", Float) = 1
+        _Alpha ("Alpha", Float) = 1
     }
     SubShader
     {
@@ -51,6 +52,7 @@
             float _Scale;
             float _Inner;
             float _Feather;
+            float _Alpha;
             
             float4 billboard(float3 vertex){
                 //float3 vpos = mul((float3x3)unity_ObjectToWorld, vertex);
@@ -95,7 +97,7 @@
                 
                 float blur =  outside * (1-saturate(dist*_Feather));
                 
-                return blur * _Color*_Color;
+                return blur * _Color*_Color*_Alpha;
             }
             ENDCG
         }

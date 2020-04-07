@@ -9,6 +9,7 @@
 		_Scale ("Scale", Float) = 3
 		
 		_Speed ("Speed", Float) = 1
+		_Alpha ("Alpha", Float) = 1
 		
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 1 //"One"
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 0 //"Zero"
@@ -45,6 +46,7 @@ CGINCLUDE
         };
         
         float _Scale;
+        float _Alpha;
         
         float4 billboard(float3 vertex){
             return mul(UNITY_MATRIX_P, 
@@ -102,7 +104,7 @@ ENDCG
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);                
                 col.a = col.r;      
-                return col * _Color;
+                return col * _Color * _Alpha;
             }
 
             ENDCG
