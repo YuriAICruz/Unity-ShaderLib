@@ -9,12 +9,13 @@
 		_FresnelBias ("Fresnel Bias", Float) = 0
 		_FresnelScale ("Fresnel Scale", Float) = 1
 		_FresnelPower ("Fresnel Power", Float) = 1
+		_Visibility ("Visibility", Float) = 1
     }
     
     SubShader
     {
-		Tags { "RenderType"="Transparent" }
-        
+        Tags { "Queue"="Transparent" "RenderType"="Transparent"}
+        Blend SrcAlpha OneMinusSrcAlpha
         //  Blend One One
         //Blend DstColor Zero
         //ColorMask RGB
@@ -47,6 +48,7 @@
             
             float4 _Color;
             float4 _FresnelColor;
+			fixed _Visibility;
 			fixed _FresnelBias;
 			fixed _FresnelScale;
 			fixed _FresnelPower;
@@ -68,7 +70,7 @@
             }
 
             fixed4 frag(v2f i) : SV_TARGET {
-                return lerp(_Color, _FresnelColor, 1 - i.fresnel);
+                return _Visibility * lerp(_Color, _FresnelColor, 1 - i.fresnel);
                 //return _Color * i.fresnel + _FresnelColor * (1-i.fresnel);
             }
             

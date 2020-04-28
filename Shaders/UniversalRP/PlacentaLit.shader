@@ -4,6 +4,7 @@
     {
         _MainTex ("Texture", 2D) = "white" {}
         _NormalMap ("Normal Map", 2D) = "bump" {}
+        _EmissionMap ("Emission Map", 2D) = "white" {}
         _Rmas ("RMAS Texture", 2D) = "white" {}
         _Roughness ("Roughness", Range(0,1)) = 0
         
@@ -33,6 +34,7 @@
             #include "PBRLib.cginc"
 			
             sampler2D _MainTex;
+            sampler2D _EmissionMap;
             sampler2D _NormalMap;
             sampler2D _Rmas;
             
@@ -164,13 +166,14 @@
             float4 frag (v2f i) : SV_TARGET{
                 // TEXTURE SAMPLES
                 float4 albedo = float4(sRGB2Lin(tex2D(_MainTex, i.uv)), 1);
+                float4 emission = float4(sRGB2Lin(tex2D(_EmissionMap, i.uv)), 1);
                 
                 float4 color = pbr(albedo, i);
                 
 	            float light = saturate(dot(i.normal, Main_Directional_Light.xyz));                
 	            light = saturate(pow(light, _Light));
 	            
-	            color.rgb = color + albedo * light * _ScatteringColor;
+	            color.rgb = color + emission * light * _ScatteringColor;
 	            
 	            color.a  = saturate( pow(1-light, 0.1));
 	            
