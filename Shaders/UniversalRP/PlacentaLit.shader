@@ -12,6 +12,7 @@
         _Light ("Light Attenuation", Float) = 0
         _FresnelColor ("Fresnel Color (F0)", Color) = (1.0, 1.0, 1.0, 1.0)
         _Anisotropy ("Anisotropy", Range(0,1)) = 0
+        _Scale ("Scale", Float) = 0
     }
     
     SubShader
@@ -44,6 +45,7 @@
 			float _Light;
 			float _Roughness;
 			float _Anisotropy;
+			float _Scale;
 			
 			struct appdata {
                 float4 position : POSITION;
@@ -89,7 +91,7 @@
                     return float4(0.0, 0.0, 0.0, 0.0);
 
                 // Just for mapping the 2d texture onto a sphere
-                float2 uv = i.uv;
+                float2 uv = i.uv * _Scale;
                 
                 // VECTORS
 
@@ -164,9 +166,11 @@
             }
             
             float4 frag (v2f i) : SV_TARGET{
+                float2 uv = i.uv * _Scale;
+                
                 // TEXTURE SAMPLES
-                float4 albedo = float4(sRGB2Lin(tex2D(_MainTex, i.uv)), 1);
-                float4 emission = float4(sRGB2Lin(tex2D(_EmissionMap, i.uv)), 1);
+                float4 albedo = float4(sRGB2Lin(tex2D(_MainTex, uv)), 1);
+                float4 emission = float4(sRGB2Lin(tex2D(_EmissionMap, uv)), 1);
                 
                 float4 color = pbr(albedo, i);
                 
