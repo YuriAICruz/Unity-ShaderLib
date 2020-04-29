@@ -2,9 +2,7 @@
 {
     Properties
     {
-        [HDR]
         _Color ("Color", COLOR) = (1,1,1,1)
-        [HDR]
         _FresnelColor ("Fresnel Color", COLOR) = (1,1,1,1)
 		_FresnelBias ("Fresnel Bias", Float) = 0
 		_FresnelScale ("Fresnel Scale", Float) = 1
@@ -25,7 +23,7 @@
         
 		Pass
 		{
-			CGPROGRAM
+			HLSLPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 						
@@ -39,10 +37,10 @@
             
             struct v2f {
                 float4 pos : SV_POSITION;
-                float3 normal : NORMAL;
-                float3 worldNormal : TEXCOORD3;
-                float4 worldPos : TEXCOORD1;
-                float fresnel : TEXCOORD2;
+                //float3 normal : NORMAL;
+                //float3 worldNormal : TEXCOORD3;
+                //float4 worldPos : TEXCOORD1;
+                //float fresnel : TEXCOORD2;
                 float2 uv : TEXCOORD;
             };
             
@@ -58,11 +56,11 @@
                 
 				o.pos = UnityObjectToClipPos(v.pos);
 
-				float3 i = normalize(ObjSpaceViewDir(v.pos));
+				//float3 i = normalize(ObjSpaceViewDir(v.pos));
 				
-				o.fresnel = _FresnelBias + _FresnelScale * pow(1 + dot(i, v.normal), _FresnelPower);
+				//o.fresnel = _FresnelBias + _FresnelScale * pow(1 + dot(i, v.normal), _FresnelPower);
                          
-                o.fresnel = saturate(o.fresnel);
+                //o.fresnel = saturate(o.fresnel);
                           
                 o.uv = v.uv;
                 
@@ -70,11 +68,11 @@
             }
 
             fixed4 frag(v2f i) : SV_TARGET {
-                return _Visibility * lerp(_Color, _FresnelColor, 1 - i.fresnel);
+                return _Visibility *_Color;//* lerp(_Color, _FresnelColor, 1 - i.fresnel);
                 //return _Color * i.fresnel + _FresnelColor * (1-i.fresnel);
             }
             
-			ENDCG
+			ENDHLSL
 		}
     }
 }

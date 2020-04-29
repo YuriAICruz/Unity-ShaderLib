@@ -52,7 +52,8 @@
                 float4 worldPos = mul(unity_ObjectToWorld, float4(v.pos.xyz, 1));
                 o.pos = mul(unity_MatrixVP, worldPos);
                 
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                //o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.uv = v.uv;
                 return o;
             }
 
@@ -62,7 +63,6 @@
                 float noise = voronoi(i.uv * _Noise);
                 noise = smoothstep(0,_Rim,pow(noise, _Power));
                 
-                //return dust;
                 return _BaseColor + (1-noise)*_Color;
             }
             
