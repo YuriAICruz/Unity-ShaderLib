@@ -21,6 +21,8 @@
         
         Cull Back
         
+        //ZWrite Off
+        
         Blend SrcAlpha OneMinusSrcAlpha
             
         Pass
@@ -169,7 +171,8 @@
                 float2 uv = i.uv * _Scale;
                 
                 // TEXTURE SAMPLES
-                float4 albedo = float4(sRGB2Lin(tex2D(_MainTex, uv)), 1);
+                float4 albedo = tex2D(_MainTex, uv);
+                 albedo.rgb = sRGB2Lin(albedo);
                 float4 emission = float4(sRGB2Lin(tex2D(_EmissionMap, uv)), 1);
                 
                 float4 color = pbr(albedo, i);
@@ -179,7 +182,10 @@
 	            
 	            color.rgb = color + emission * light * _ScatteringColor;
 	            
-	            color.a  = saturate( pow(1-light, 0.1));
+	            color.a  = albedo.a * saturate( pow(1-light, 0.1));
+	            
+	            //if(color.a <= 0.2)
+	              //  discard;
 	            
 	            return color;
             }
