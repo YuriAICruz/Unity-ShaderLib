@@ -13,6 +13,7 @@
         _FresnelColor ("Fresnel Color (F0)", Color) = (1.0, 1.0, 1.0, 1.0)
         _Anisotropy ("Anisotropy", Range(0,1)) = 0
         _Scale ("Scale", Float) = 0
+        _Alpha ("Alpha", Float) = 0
     }
     
     SubShader
@@ -48,6 +49,7 @@
 			float _Roughness;
 			float _Anisotropy;
 			float _Scale;
+			float _Alpha;
 			
 			struct appdata {
                 float4 position : POSITION;
@@ -182,7 +184,7 @@
 	            
 	            color.rgb = color + emission * light * _ScatteringColor;
 	            
-	            color.a  = albedo.a * saturate( pow(1-light, 0.1));
+	            color.a  = saturate(albedo.a+_Alpha);// saturate( pow(1-light, 0.1));
 	            
 	            //if(color.a <= 0.2)
 	              //  discard;
