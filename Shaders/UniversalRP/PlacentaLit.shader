@@ -2,6 +2,7 @@
 {
     Properties
     {
+        _AddColor ("Add Color", COLOR) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
         _NormalMap ("Normal Map", 2D) = "bump" {}
         _EmissionMap ("Emission Map", 2D) = "white" {}
@@ -44,6 +45,7 @@
             
 			float4 _ScatteringColor;
 			float4 _FresnelColor;
+			float4 _AddColor;
 			float4 Main_Directional_Light;
 			float _Light;
 			float _Roughness;
@@ -182,7 +184,7 @@
 	            float light = saturate(dot(i.normal, Main_Directional_Light.xyz));                
 	            light = saturate(pow(light, _Light));
 	            
-	            color.rgb = color + emission * light * _ScatteringColor;
+	            color.rgb = color + emission * light * _ScatteringColor + _AddColor.rgb;
 	            
 	            color.a  = saturate(albedo.a+_Alpha);// saturate( pow(1-light, 0.1));
 	            
